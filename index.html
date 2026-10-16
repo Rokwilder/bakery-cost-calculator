@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Free Recipe Cost Calculator for Home Bakers | Price Your Bakes</title>
+<meta name="description" content="Free recipe cost calculator for home bakers. Add ingredients, labor, overhead and markup to get a suggested price per cupcake, cookie or cake.">
+<style>
+:root{--pink:#e8798f;--dark:#3b2a2f;--cream:#fff8f3;--line:#f0dcd4}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--cream);color:var(--dark);line-height:1.5}
+header{background:linear-gradient(135deg,#f7c6cf,#fde7d7);padding:48px 20px;text-align:center}
+header h1{margin:0 0 8px;font-size:2.2rem}header p{margin:0;font-size:1.1rem}
+main{max-width:960px;margin:0 auto;padding:24px 16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:24px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+table{width:100%;border-collapse:collapse}th,td{padding:6px 4px;text-align:left;font-size:.92rem}
+input{width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;font-size:.95rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:14px}
+label{font-size:.85rem;font-weight:600}
+button{cursor:pointer;border:0;border-radius:8px;padding:9px 14px;font-weight:600}
+.add{background:#f3e3dd;margin-top:8px}.del{background:none;color:#b55;font-size:1.1rem}
+.results{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}
+.stat{background:#fdf1ec;border-radius:10px;padding:12px;text-align:center}.stat b{display:block;font-size:1.3rem}
+.big{background:var(--pink);color:#fff}.cta{display:inline-block;background:var(--dark);color:#fff;text-decoration:none;padding:14px 26px;border-radius:10px;font-weight:700;font-size:1.1rem}
+footer{text-align:center;font-size:.85rem;padding:30px;color:#866}
+</style></head><body>
+<header><h1>🧁 Free Recipe Cost Calculator</h1><p>Find out what your bakes really cost — and what to charge — in 2 minutes.</p></header>
+<main>
+<section class="card" id="calculator"><h2>1. Ingredients</h2>
+<p style="font-size:.9rem">Enter how much you <em>use</em> and what the <em>package</em> costs (use the same unit for both, e.g. grams).</p>
+<table><thead><tr><th>Ingredient</th><th>Amount used</th><th>Package size</th><th>Package price ($)</th><th>Cost</th><th></th></tr></thead><tbody id="rows"></tbody></table>
+<button class="add" id="addRow">+ Add ingredient</button>
+<h2 style="margin-top:22px">2. Labor, overhead &amp; markup</h2>
+<div class="grid">
+<div><label>Items per batch</label><input id="yield" type="number" min="1" value="12"></div>
+<div><label>Hours of work</label><input id="laborHours" type="number" step="0.25" value="1.5"></div>
+<div><label>Your hourly rate ($)</label><input id="laborRate" type="number" value="18"></div>
+<div><label>Overhead % (electricity, wear)</label><input id="overheadPct" type="number" value="10"></div>
+<div><label>Packaging per batch ($)</label><input id="packaging" type="number" step="0.01" value="3"></div>
+<div><label>Profit markup %</label><input id="markupPct" type="number" value="30"></div>
+</div>
+<div class="results">
+<div class="stat">Ingredients<b id="rIng">$0</b></div><div class="stat">Labor<b id="rLab">$0</b></div>
+<div class="stat">Overhead + pkg<b id="rOver">$0</b></div><div class="stat">Total batch cost<b id="rTot">$0</b></div>
+<div class="stat">Cost per item<b id="rCost">$0</b></div><div class="stat big">Suggested price / item<b id="rPrice">$0</b></div>
+</div></section>
+<section class="card" id="guide"><h2>Quick pricing guide for home bakers</h2>
+<ol>
+<li><b>Cost every ingredient by weight.</b> A 2 kg bag of flour at $4 is $0.002/g — the calculator does the math.</li>
+<li><b>Pay yourself.</b> Include shopping, baking, decorating, cleanup and packaging time at a real hourly rate.</li>
+<li><b>Add overhead.</b> 5–15% covers oven power, pans, mixer wear and small supplies.</li>
+<li><b>Add profit on top.</b> 20–50% markup is common; custom or decorated work can go higher.</li>
+<li><b>Check your local market,</b> then round to a clean price ($3.50, not $3.37). Don't race to the bottom.</li>
+</ol></section>
+<section class="card" style="text-align:center" id="kit"><h2>Want the full Home Bakery Business Kit?</h2>
+<p>Recipe costing spreadsheet (Excel/Google Sheets) · Fillable cake order form · Cottage food label templates · Pricing guide PDF</p>
+<a class="cta" id="buy" href="#CHECKOUT_LINK_PLACEHOLDER">Get the full kit – $12</a></section>
+</main><footer>Estimates only — not financial or legal advice. © Home Bakery Business Kit</footer>
+<script src="calc.js"></script>
+<script>
+const defaults=[["All-purpose flour",250,2000,4.0],["Sugar",200,1800,3.5],["Butter",115,454,4.5],["Eggs",2,12,3.6],["Vanilla extract",5,59,6.0]];
+const rows=document.getElementById('rows');const $=id=>document.getElementById(id);const fmt=x=>'$'+x.toFixed(2);
+function addRow(v=["",0,0,0]){const tr=document.createElement('tr');tr.innerHTML=`<td><input value="${v[0]}"></td><td><input type="number" value="${v[1]}"></td><td><input type="number" value="${v[2]}"></td><td><input type="number" step="0.01" value="${v[3]}"></td><td class="c">$0.00</td><td><button class="del" title="Remove">✕</button></td>`;tr.querySelector('.del').onclick=()=>{tr.remove();calc()};rows.appendChild(tr);}
+function calc(){const ings=[...rows.children].map(tr=>{const i=tr.querySelectorAll('input');const r={used:i[1].value,pkgSize:i[2].value,pkgPrice:i[3].value};const c=+r.pkgSize>0?r.used/r.pkgSize*r.pkgPrice:0;tr.querySelector('.c').textContent=fmt(c);return r});
+const r=computeCost({ingredients:ings,yield:$('yield').value,laborHours:$('laborHours').value,laborRate:$('laborRate').value,overheadPct:$('overheadPct').value,packaging:$('packaging').value,markupPct:$('markupPct').value});
+$('rIng').textContent=fmt(r.ingredients);$('rLab').textContent=fmt(r.labor);$('rOver').textContent=fmt(r.overhead);$('rTot').textContent=fmt(r.total);$('rCost').textContent=fmt(r.costPerItem);$('rPrice').textContent=fmt(r.pricePerItem);}
+defaults.forEach(addRow);$('addRow').onclick=()=>{addRow();calc()};document.addEventListener('input',calc);calc();
+</script></body></html>
